@@ -1,0 +1,15 @@
+Conjuntos frecuentes encontrados:
+                                     itemset  support
+0                                [Star Wars]      0.6
+1                     [Star Wars, Star Wars]      0.6
+2          [Star Wars, Star Wars, Star Wars]      0.6
+33                          [Matrix, Matrix]      0.6
+35                  [Matrix, Matrix, Matrix]      0.6
+..                                       ...      ...
+103     [Interstellar, Inception, Star Wars]      0.2
+105  [Interstellar, Inception, Interstellar]      0.2
+104     [Interstellar, Inception, Inception]      0.2
+107  [Interstellar, Interstellar, Star Wars]      0.2
+109  [Interstellar, Interstellar, Inception]      0.2
+
+[111 rows x 2 columns]
