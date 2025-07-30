@@ -3,93 +3,72 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from mlxtend.frequent_patterns import apriori, association_rules
-from efficient_apriori import apriori as efficient_apriori_alg
+import mlflow
+import time
+import psutil
+import os
+
+# Configurar pandas para mostrar mejor los datos
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_rows', None)
+
+mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_experiment("Reglas_Apriori")
 
 # =====================
 # Cargar el dataset
 # =====================
-df = pd.read_excel('online_retail_2.xlsx')
-
-# =====================
-# Inspección Inicial y Limpieza Básica
-# =====================
-print("Información general del DataFrame:")
-df.info()
-
-missing_customers = df['CustomerID'].isnull().sum()
-total_rows = df.shape[0]
-print(f"\nSe encontraron {missing_customers} filas sin CustomerID ({missing_customers/total_rows:.2%}).")
-
-df.dropna(subset=['CustomerID'], inplace=True)
-print(f"Filas después de eliminar CustomerID nulos: {df.shape[0]}")
-
-df['CustomerID'] = df['CustomerID'].astype(int)
-df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'], dayfirst=True)
-
-# =====================
-# Limpieza de Registros Inválidos
-# =====================
-print(f"Filas con cantidad negativa (devoluciones): {df[df['Quantity'] <= 0].shape[0]}")
-df = df[df['Quantity'] > 0]
-print(f"Filas después de eliminar cantidades negativas: {df.shape[0]}")
-
-print(f"\nFilas con precio unitario cero: {df[df['UnitPrice'] <= 0].shape[0]}")
-df = df[df['UnitPrice'] > 0]
-print(f"Filas después de eliminar precios cero: {df.shape[0]}")
-
-# =====================
-# Foco en el Mercado Principal (Reino Unido)
-# =====================
-print("Distribución de clientes por país (Top 10):")
-print(df['Country'].value_counts().head(10))
-
-df_uk = df[df['Country'] == 'United Kingdom'].copy()
-print(f"\nAnálisis enfocado en el Reino Unido. Total de filas: {df_uk.shape[0]}")
-
-# =====================
-# Eliminación de Duplicados
-# =====================
-print(f"Número de filas duplicadas: {df_uk.duplicated().sum()}")
-df_uk.drop_duplicates(inplace=True)
-print(f"Filas después de eliminar duplicados: {df_uk.shape[0]}")
-
-# =====================
-# Selección de Productos Más Comprados
-# =====================
-top_products = df_uk['Description'].value_counts().head(500).index
-df_uk = df_uk[df_uk['Description'].isin(top_products)]
-print("Productos más comprados:")
-print(df_uk['Description'].value_counts().head(10))
-
-# =====================
-# Cantidad de filas
-# =====================
-
-print(f"Total de filas después de filtrar productos: {df_uk.shape[0]}")
+df = pd.read_csv('cleaned_online_retail.csv')
 
 # =====================
 # Preprocesamiento adicional para Apriori
 # =====================
-df_uk['Description'] = df_uk['Description'].str.strip()
-df_uk.dropna(subset=['InvoiceNo'], inplace=True)
-df_uk['InvoiceNo'] = df_uk['InvoiceNo'].astype(str)
-df_uk = df_uk[~df_uk['InvoiceNo'].str.contains('C')]  # Quitar devoluciones
-df_uk = df_uk[df_uk['Quantity'] > 0]
+df['Description'] = df['Description'].str.strip()
+df.dropna(subset=['InvoiceNo'], inplace=True)
+df['InvoiceNo'] = df['InvoiceNo'].astype(str)
+df = df[~df['InvoiceNo'].str.contains('C')]  # Quitar devoluciones
+df = df[df['Quantity'] > 0]
 
 # =====================
 # Crear matriz de transacciones
 # =====================
-basket = (df_uk.groupby(['InvoiceNo', 'Description'])['Quantity']
+basket = (df.groupby(['InvoiceNo', 'Description'])['Quantity']
           .sum().unstack().reset_index().fillna(0)
           .set_index('InvoiceNo'))
 
 basket_sets = basket.applymap(lambda x: 1 if x > 0 else 0)
 
 # =====================
+# Monitoreo de recursos
+# =====================
+process = psutil.Process(os.getpid())
+start_time = time.time()
+
+# Memoria antes del algoritmo
+memory_before = process.memory_info().rss / (1024 * 1024)  # en MB
+print(f"Memoria antes del algoritmo: {memory_before:.2f} MB")
+
+# Variable para rastrear el pico de memoria
+peak_memory = memory_before
+
+# =====================
 # Apriori y reglas de asociación
 # =====================
+print("Iniciando algoritmo Apriori...")
+
+# Medir memoria durante frequent_itemsets
 frequent_itemsets = apriori(basket_sets, min_support=0.01, use_colnames=True)
+memory_after_frequent = process.memory_info().rss / (1024 * 1024)
+peak_memory = max(peak_memory, memory_after_frequent)
+print(f"Memoria después de frequent itemsets: {memory_after_frequent:.2f} MB")
+
+# Medir memoria durante association_rules
 rules = association_rules(frequent_itemsets, metric='confidence', min_threshold=0.6)
+memory_after_rules = process.memory_info().rss / (1024 * 1024)
+peak_memory = max(peak_memory, memory_after_rules)
+print(f"Memoria después de reglas de asociación: {memory_after_rules:.2f} MB")
 
 # =====================
 # Calcular métricas adicionales leverage y conviction
@@ -119,13 +98,13 @@ for i, metric in enumerate(metrics, 1):
     plt.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('apriori_reglas_asociacion.png', dpi=300, bbox_inches='tight')
+plt.savefig('parcial/apriori/apriori_reglas_asociacion.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # =====================
 # Guardar reglas en .pkl
 # =====================
-with open('rules_apriori.pkl', 'wb') as f:
+with open('parcial/apriori/rules_apriori.pkl', 'wb') as f:
     pickle.dump(rules, f)
 
 # =====================
@@ -134,18 +113,54 @@ with open('rules_apriori.pkl', 'wb') as f:
 
 rules = rules.sort_values('confidence', ascending=False)
 
-print("Top 5 reglas de asociación:")
-print(rules[['antecedents', 'consequents', 'support', 'confidence']].head())
+print("\n=== TOP 5 REGLAS DE ASOCIACIÓN ===")
+# Configurar pandas para mostrar mejor los DataFrames
+with pd.option_context('display.max_colwidth', None, 'display.width', None):
+    print(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']].head())
 
 # =====================
-# Función de recomendación para productos
+# Monitoreo de recursos después del procesamiento
+# =====================
+end_time = time.time()
+memory_final = process.memory_info().rss / (1024 * 1024)
+peak_memory = max(peak_memory, memory_final)
+
+execution_time = end_time - start_time
+memory_increase = memory_final - memory_before
+
+print(f"\n=== RESUMEN DE MEMORIA ===")
+print(f"Memoria inicial: {memory_before:.2f} MB")
+print(f"Memoria pico: {peak_memory:.2f} MB")
+print(f"Memoria final: {memory_final:.2f} MB")
+print(f"Incremento total: {memory_increase:.2f} MB")
+print(f"Tiempo de ejecución: {execution_time:.2f} segundos")
+
+mlflow.log_metric("execution_time_seconds", execution_time)
+mlflow.log_metric("memory_before_MB", memory_before)
+mlflow.log_metric("memory_peak_MB", peak_memory)
+mlflow.log_metric("memory_final_MB", memory_final)
+mlflow.log_metric("memory_increase_MB", memory_increase)
+
+# =====================
+# Configuración de MLflow
 # =====================
 
-def get_product_recommendations(product_name):
-    matched_rules = rules[rules['antecedents'].apply(lambda x: product_name in x)]
-    return matched_rules[['antecedents', 'consequents', 'confidence']].head()
+with mlflow.start_run(run_name="Reglas_Apriori"):
+    # Log de métricas agregadas
+    mlflow.log_metric("rules_total", len(rules))
+    mlflow.log_metric("avg_support", rules['support'].mean())
+    mlflow.log_metric("avg_confidence", rules['confidence'].mean())
+    mlflow.log_metric("avg_lift", rules['lift'].mean())
+    mlflow.log_metric("max_lift", rules['lift'].max())
+    mlflow.log_metric("avg_leverage", rules['leverage'].mean())
+    mlflow.log_metric("avg_conviction", rules['conviction'].replace([np.inf], np.nan).dropna().mean())
 
-# Ejemplo de uso
-producto = 'WHITE HANGING HEART T-LIGHT HOLDER'  # Cambiar por un producto válido
-print(f"\nRecomendaciones para quienes compraron '{producto}':")
-print(get_product_recommendations(producto))
+    # Log del archivo con reglas
+    mlflow.log_artifact('parcial/apriori/rules_apriori.pkl')
+
+    # Log del gráfico
+    mlflow.log_artifact('parcial/apriori/apriori_reglas_asociacion.png')
+
+    # También podés loggear parámetros si usás distintos valores de soporte o confianza
+    mlflow.log_param("min_support", 0.01)
+    mlflow.log_param("min_confidence", 0.6)
