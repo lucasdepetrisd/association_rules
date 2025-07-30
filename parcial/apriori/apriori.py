@@ -4,9 +4,9 @@ import numpy as np
 import pickle
 from mlxtend.frequent_patterns import apriori, association_rules
 import mlflow
-import time
-import psutil
-import os
+import sys
+import io
+from resource_monitor import ResourceMonitor, get_dataset_memory_usage, print_initial_system_info
 
 # Configurar pandas para mostrar mejor los datos
 pd.set_option('display.max_columns', None)
@@ -16,6 +16,35 @@ pd.set_option('display.max_rows', None)
 
 mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_experiment("Reglas_Apriori")
+
+# =====================
+# Capturar salida de print
+# =====================
+
+class TeeOutput:
+    """Clase para capturar print y mantener salida en consola"""
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = io.StringIO()
+    
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+    
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+    
+    def get_output(self):
+        return self.log.getvalue()
+
+# Iniciar captura de salida
+output_capture = TeeOutput()
+sys.stdout = output_capture
+
+print("=== INICIO DE EJECUCIÓN APRIORI ===")
+print(f"Timestamp: {pd.Timestamp.now()}")
+print("="*50)
 
 # =====================
 # Cargar el dataset
@@ -43,32 +72,32 @@ basket_sets = basket.applymap(lambda x: 1 if x > 0 else 0)
 # =====================
 # Monitoreo de recursos
 # =====================
-process = psutil.Process(os.getpid())
-start_time = time.time()
 
-# Memoria antes del algoritmo
-memory_before = process.memory_info().rss / (1024 * 1024)  # en MB
-print(f"Memoria antes del algoritmo: {memory_before:.2f} MB")
+# Crear instancia del monitor
+monitor = ResourceMonitor(monitoring_interval=0.5)
 
-# Variable para rastrear el pico de memoria
-peak_memory = memory_before
+# Iniciar monitoreo
+initial_info = monitor.start_monitoring(clean_memory=True)
+
+# Mostrar información inicial del sistema
+print_initial_system_info(initial_info)
+get_dataset_memory_usage(df, "dataset original")
+get_dataset_memory_usage(basket_sets, "basket_sets")
 
 # =====================
 # Apriori y reglas de asociación
 # =====================
-print("Iniciando algoritmo Apriori...")
+print("\n=== INICIANDO ALGORITMO APRIORI ===")
 
 # Medir memoria durante frequent_itemsets
+print("Calculando frequent itemsets...")
 frequent_itemsets = apriori(basket_sets, min_support=0.01, use_colnames=True)
-memory_after_frequent = process.memory_info().rss / (1024 * 1024)
-peak_memory = max(peak_memory, memory_after_frequent)
-print(f"Memoria después de frequent itemsets: {memory_after_frequent:.2f} MB")
+print(f"Frequent itemsets encontrados: {len(frequent_itemsets)}")
 
 # Medir memoria durante association_rules
+print("Generando reglas de asociación...")
 rules = association_rules(frequent_itemsets, metric='confidence', min_threshold=0.6)
-memory_after_rules = process.memory_info().rss / (1024 * 1024)
-peak_memory = max(peak_memory, memory_after_rules)
-print(f"Memoria después de reglas de asociación: {memory_after_rules:.2f} MB")
+print(f"Reglas generadas: {len(rules)}")
 
 # =====================
 # Calcular métricas adicionales leverage y conviction
@@ -121,31 +150,60 @@ with pd.option_context('display.max_colwidth', None, 'display.width', None):
 # =====================
 # Monitoreo de recursos después del procesamiento
 # =====================
-end_time = time.time()
-memory_final = process.memory_info().rss / (1024 * 1024)
-peak_memory = max(peak_memory, memory_final)
 
-execution_time = end_time - start_time
-memory_increase = memory_final - memory_before
+# Detener monitoreo y obtener métricas
+metrics = monitor.stop_monitoring(clean_memory=True)
 
-print(f"\n=== RESUMEN DE MEMORIA ===")
-print(f"Memoria inicial: {memory_before:.2f} MB")
-print(f"Memoria pico: {peak_memory:.2f} MB")
-print(f"Memoria final: {memory_final:.2f} MB")
-print(f"Incremento total: {memory_increase:.2f} MB")
-print(f"Tiempo de ejecución: {execution_time:.2f} segundos")
+# Imprimir resumen completo
+monitor.print_summary(metrics)
 
-mlflow.log_metric("execution_time_seconds", execution_time)
-mlflow.log_metric("memory_before_MB", memory_before)
-mlflow.log_metric("memory_peak_MB", peak_memory)
-mlflow.log_metric("memory_final_MB", memory_final)
-mlflow.log_metric("memory_increase_MB", memory_increase)
+# Mostrar progresión de memoria y CPU
+monitor.print_progression_sample(sample_every=10)
+
+print(f"\n=== FIN DE EJECUCIÓN APRIORI ===")
+print(f"Timestamp: {pd.Timestamp.now()}")
+print("="*50)
+
+# =====================
+# Guardar salida capturada
+# =====================
+
+# Restaurar stdout original
+sys.stdout = output_capture.terminal
+
+# Obtener la salida capturada
+captured_output = output_capture.get_output()
+
+# Guardar en archivo
+output_filename = 'parcial/apriori/apriori_execution_log.txt'
+with open(output_filename, 'w', encoding='utf-8') as f:
+    f.write(captured_output)
 
 # =====================
 # Configuración de MLflow
 # =====================
 
 with mlflow.start_run(run_name="Reglas_Apriori"):
+    # Métricas de rendimiento
+    mlflow.log_metric("execution_time_seconds", metrics['execution_time_seconds'])
+
+    # Métricas de memoria
+    mlflow.log_metric("memory_initial_MB", metrics['memory_initial_MB'])
+    mlflow.log_metric("memory_final_MB", metrics['memory_final_MB'])
+    mlflow.log_metric("memory_peak_process_MB", metrics['memory_peak_process_MB'])
+    mlflow.log_metric("memory_peak_system_MB", metrics['memory_peak_system_MB'])
+    mlflow.log_metric("memory_max_additional_MB", metrics['memory_max_additional_MB'])
+    mlflow.log_metric("memory_freed_after_peak_MB", metrics['memory_freed_after_peak_MB'])
+    mlflow.log_metric("max_system_percent", metrics['max_system_percent'])
+
+    # Métricas de CPU
+    mlflow.log_metric("cpu_peak_process_percent", metrics['cpu_peak_process_percent'])
+    mlflow.log_metric("cpu_peak_system_percent", metrics['cpu_peak_system_percent'])
+    mlflow.log_metric("cpu_avg_process_percent", metrics['cpu_avg_process_percent'])
+    mlflow.log_metric("cpu_avg_system_percent", metrics['cpu_avg_system_percent'])
+    mlflow.log_metric("cpu_time_used_seconds", metrics['cpu_time_used_seconds'])
+    mlflow.log_metric("cpu_efficiency_percent", metrics['cpu_efficiency_percent'])
+
     # Log de métricas agregadas
     mlflow.log_metric("rules_total", len(rules))
     mlflow.log_metric("avg_support", rules['support'].mean())
@@ -160,7 +218,12 @@ with mlflow.start_run(run_name="Reglas_Apriori"):
 
     # Log del gráfico
     mlflow.log_artifact('parcial/apriori/apriori_reglas_asociacion.png')
+    
+    # Log de la salida completa de ejecución
+    mlflow.log_artifact(output_filename)
 
     # También podés loggear parámetros si usás distintos valores de soporte o confianza
     mlflow.log_param("min_support", 0.01)
     mlflow.log_param("min_confidence", 0.6)
+
+print("Ejecución completada. Todos los artifacts guardados en MLflow.")

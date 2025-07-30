@@ -1,11 +1,4 @@
 import pandas as pd
-from mlxtend.frequent_patterns import apriori, association_rules
-
-# Configurar pandas para mostrar mejor los datos
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_rows', None)
 
 # ======================
 # Cargar modelo .pkl

@@ -48,13 +48,13 @@ print(f"Número de filas duplicadas: {df_uk.duplicated().sum()}")
 df_uk.drop_duplicates(inplace=True)
 print(f"Filas después de eliminar duplicados: {df_uk.shape[0]}")
 
-# =====================
-# Selección de Productos Más Comprados
-# =====================
-top_products = df_uk['Description'].value_counts().head(500).index
-df_uk = df_uk[df_uk['Description'].isin(top_products)]
-print("Productos más comprados:")
-print(df_uk['Description'].value_counts().head(10))
+# # =====================
+# # Selección de Productos Más Comprados
+# # =====================
+# top_products = df_uk['Description'].value_counts().head(500).index
+# df_uk = df_uk[df_uk['Description'].isin(top_products)]
+# print("Productos más comprados:")
+# print(df_uk['Description'].value_counts().head(10))
 
 # =====================
 # Cantidad de filas
