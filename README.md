@@ -10,6 +10,24 @@ El objetivo de este análisis es evaluar tanto la **calidad de las reglas genera
 
 ## 1. Metodología
 
+### 1.1 Preprocesamiento del Dataset
+
+El análisis parte del dataset original `online_retail_2.xlsx` provisto en clase, el cual requirió un proceso de limpieza y transformación para generar `cleaned_online_retail.csv`:
+
+**Transformaciones aplicadas:**
+- **Eliminación de valores nulos** en columnas críticas (`InvoiceNo`, `Description`)
+- **Filtrado de devoluciones** (InvoiceNo que contienen 'C')
+- **Exclusión de cantidades negativas** o cero
+- **Normalización de descripciones** (eliminación de espacios extras)
+- **Conversión de tipos** (InvoiceNo a string para manejo consistente)
+
+**Resultado:**
+- Dataset limpio con transacciones válidas únicamente
+- Formato optimizado para algoritmos de minería de patrones
+- Reducción significativa de ruido en los datos
+
+### 1.2 Implementación de Algoritmos
+
 Se ejecutaron los tres algoritmos utilizando implementaciones disponibles en Python:
 
 - **Apriori** de `mlxtend`
