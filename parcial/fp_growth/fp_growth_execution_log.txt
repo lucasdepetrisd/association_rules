@@ -1,11 +1,12 @@
 === INICIO DE EJECUCIÓN FP-GROWTH ===
-Timestamp: 2025-07-30 17:59:56.852668
+Algoritmo: Algoritmo FP-Growth
+Timestamp: 2025-07-30 22:07:17.410484
 ==================================================
 === ESTADO INICIAL ===
-Memoria proceso (RSS): 1235.94 MB
-Memoria proceso (VMS): 2167.90 MB
-Memoria sistema total: 9303.85 MB (23.9%)
-CPU actual del sistema: 9.6%
+Memoria proceso (RSS): 1233.90 MB
+Memoria proceso (VMS): 2165.50 MB
+Memoria sistema total: 6305.40 MB (16.3%)
+CPU actual del sistema: 7.3%
 Número de núcleos CPU: 16 físicos, 16 lógicos
 Tamaño de dataset original: 126.42 MB
 Tamaño de basket_sets: 487.79 MB
@@ -21,41 +22,38 @@ Reglas generadas: 138
 67                                                                           (HERB MARKER THYME)                (HERB MARKER ROSEMARY)  0.010153    0.944134  86.829038
 66                                                                        (HERB MARKER ROSEMARY)                   (HERB MARKER THYME)  0.010153    0.933702  86.829038
 75                     (WOODEN TREE CHRISTMAS SCANDINAVIAN, WOODEN HEART CHRISTMAS SCANDINAVIAN)  (WOODEN STAR CHRISTMAS SCANDINAVIAN)  0.010213    0.928962  38.562337
-106  (REGENCY CAKESTAND 3 TIER, ROSES REGENCY TEACUP AND SAUCER, PINK REGENCY TEACUP AND SAUCER)     (GREEN REGENCY TEACUP AND SAUCER)  0.012135    0.897778  24.418969
-112                            (ROSES REGENCY TEACUP AND SAUCER, PINK REGENCY TEACUP AND SAUCER)     (GREEN REGENCY TEACUP AND SAUCER)  0.020485    0.890339  24.216650
+106  (REGENCY CAKESTAND 3 TIER, PINK REGENCY TEACUP AND SAUCER, ROSES REGENCY TEACUP AND SAUCER)     (GREEN REGENCY TEACUP AND SAUCER)  0.012135    0.897778  24.418969
+112                            (PINK REGENCY TEACUP AND SAUCER, ROSES REGENCY TEACUP AND SAUCER)     (GREEN REGENCY TEACUP AND SAUCER)  0.020485    0.890339  24.216650
 
 === RESUMEN COMPLETO DE RECURSOS ===
-Tiempo de ejecución: 43.95 segundos
-Total de muestras capturadas: 85
+Tiempo de ejecución: 29.67 segundos
+Total de muestras capturadas: 57
 
 --- MÉTRICAS DE MEMORIA ---
-🔥 Pico de memoria del proceso: 2939.80 MB
-🔥 Pico de memoria del sistema: 11060.07 MB
-🔥 Porcentaje máximo de RAM usado: 28.5%
-📊 Memoria inicial del proceso: 1236.55 MB
-📊 Memoria final del proceso: 1356.50 MB
-📈 Memoria máxima adicional usada: 1703.26 MB
-🗑️ Memoria liberada después del pico: 1583.30 MB
+🔥 Pico de memoria del proceso: 2870.80 MB
+🔥 Pico de memoria del sistema: 7954.35 MB
+🔥 Porcentaje máximo de RAM usado: 20.5%
+📊 Memoria inicial del proceso: 1234.41 MB
+📊 Memoria final del proceso: 1363.39 MB
+📈 Memoria máxima adicional usada: 1636.40 MB
+🗑️ Memoria liberada después del pico: 1507.41 MB
 
 --- MÉTRICAS DE CPU ---
-🚀 Pico de CPU del proceso: 103.0%
-🚀 Pico de CPU del sistema: 20.4%
-📊 Promedio de CPU del proceso: 55.1%
-📊 Promedio de CPU del sistema: 6.9%
-⏱️ Tiempo total de CPU usado: 24.27 segundos
-⚡ Eficiencia CPU: 55.2% (CPU time / Wall time)
+🚀 Pico de CPU del proceso: 103.1%
+🚀 Pico de CPU del sistema: 15.9%
+📊 Promedio de CPU del proceso: 76.2%
+📊 Promedio de CPU del sistema: 7.4%
+⏱️ Tiempo total de CPU usado: 22.45 segundos
+⚡ Eficiencia CPU: 75.7% (CPU time / Wall time)
 
 --- PROGRESIÓN DE MEMORIA Y CPU (muestras cada 10 registros) ---
-T+0.0s: Proceso=1236.5MB, Sistema=9250MB (23.9%), CPU_proc=0.0%, CPU_sys=0.0%
-T+5.4s: Proceso=1783.3MB, Sistema=9973MB (25.7%), CPU_proc=90.7%, CPU_sys=13.3%
-T+10.5s: Proceso=1787.7MB, Sistema=9953MB (25.7%), CPU_proc=96.9%, CPU_sys=7.6%
-T+15.7s: Proceso=1787.7MB, Sistema=9996MB (25.8%), CPU_proc=94.1%, CPU_sys=7.8%
-T+20.8s: Proceso=1787.9MB, Sistema=9989MB (25.8%), CPU_proc=99.9%, CPU_sys=8.1%
-T+26.0s: Proceso=1358.6MB, Sistema=9259MB (23.9%), CPU_proc=0.0%, CPU_sys=3.3%
-T+31.0s: Proceso=1358.7MB, Sistema=9266MB (23.9%), CPU_proc=0.0%, CPU_sys=1.7%
-T+36.1s: Proceso=1358.7MB, Sistema=9237MB (23.8%), CPU_proc=9.1%, CPU_sys=2.3%
-T+41.2s: Proceso=1362.5MB, Sistema=9196MB (23.7%), CPU_proc=75.7%, CPU_sys=9.6%
+T+0.0s: Proceso=1234.4MB, Sistema=6307MB (16.3%), CPU_proc=0.0%, CPU_sys=0.0%
+T+5.3s: Proceso=1785.6MB, Sistema=6905MB (17.8%), CPU_proc=99.9%, CPU_sys=7.4%
+T+10.4s: Proceso=1786.4MB, Sistema=6905MB (17.8%), CPU_proc=96.9%, CPU_sys=6.1%
+T+15.6s: Proceso=1786.5MB, Sistema=6905MB (17.8%), CPU_proc=88.3%, CPU_sys=10.7%
+T+20.8s: Proceso=1482.6MB, Sistema=6652MB (17.2%), CPU_proc=97.1%, CPU_sys=8.3%
+T+25.8s: Proceso=1343.4MB, Sistema=6519MB (16.8%), CPU_proc=0.0%, CPU_sys=6.4%
 
 === FIN DE EJECUCIÓN FP-GROWTH ===
-Timestamp: 2025-07-30 18:01:11.833883
+Timestamp: 2025-07-30 22:08:16.133573
 ==================================================

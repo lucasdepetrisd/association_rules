@@ -4,15 +4,8 @@ import numpy as np
 import pickle
 from mlxtend.frequent_patterns import apriori, association_rules
 import mlflow
-import sys
-import io
 from resource_monitor import ResourceMonitor, get_dataset_memory_usage, print_initial_system_info
-
-# Configurar pandas para mostrar mejor los datos
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_rows', None)
+from output_capture import setup_output_capture, finalize_output_capture, print_script_header, print_script_footer
 
 mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_experiment("Reglas_Apriori")
@@ -21,30 +14,10 @@ mlflow.set_experiment("Reglas_Apriori")
 # Capturar salida de print
 # =====================
 
-class TeeOutput:
-    """Clase para capturar print y mantener salida en consola"""
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = io.StringIO()
-    
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-    
-    def flush(self):
-        self.terminal.flush()
-        self.log.flush()
-    
-    def get_output(self):
-        return self.log.getvalue()
-
 # Iniciar captura de salida
-output_capture = TeeOutput()
-sys.stdout = output_capture
+output_capture = setup_output_capture()
 
-print("=== INICIO DE EJECUCIÓN APRIORI ===")
-print(f"Timestamp: {pd.Timestamp.now()}")
-print("="*50)
+print_script_header("APRIORI", "Algoritmo Apriori")
 
 # =====================
 # Cargar el dataset
@@ -115,16 +88,62 @@ rules.loc[rules['confidence'] == 1, 'conviction'] = np.inf
 
 plt.figure(figsize=(18, 12))
 
-metrics = ['support', 'confidence', 'lift', 'leverage', 'conviction']
-colors = ['skyblue', 'lightgreen', 'gold', 'salmon', 'plum']
+# 1. Distribución del soporte
+plt.subplot(2, 3, 1)
+plt.hist(rules['support'], bins=30, alpha=0.7, color='skyblue', edgecolor='black')
+plt.title('Distribución del Soporte')
+plt.xlabel('Soporte')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
 
-for i, metric in enumerate(metrics, 1):
-    plt.subplot(2, 3, i)
-    plt.hist(rules[metric], bins=30, color=colors[i-1], edgecolor='black', alpha=0.7)
-    plt.title(f'Distribución de {metric.capitalize()}')
-    plt.xlabel(metric.capitalize())
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
+# 2. Distribución de la confianza
+plt.subplot(2, 3, 2)
+plt.hist(rules['confidence'], bins=30, alpha=0.7, color='lightgreen', edgecolor='black')
+plt.title('Distribución de la Confianza')
+plt.xlabel('Confianza')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
+
+# 3. Distribución del lift
+plt.subplot(2, 3, 3)
+plt.hist(rules['lift'], bins=30, alpha=0.7, color='gold', edgecolor='black')
+plt.title('Distribución del Lift')
+plt.xlabel('Lift')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
+
+# 4. Distribución del leverage
+plt.subplot(2, 3, 4)
+plt.hist(rules['leverage'], bins=30, alpha=0.7, color='salmon', edgecolor='black')
+plt.title('Distribución del Leverage')
+plt.xlabel('Leverage')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
+
+# 5. Scatter plot: Confianza vs Soporte (coloreado por Lift)
+plt.subplot(2, 3, 5)
+scatter = plt.scatter(rules['support'], rules['confidence'], alpha=0.6, c=rules['lift'], cmap='viridis')
+plt.colorbar(scatter, label='Lift')
+plt.title('Confianza vs Soporte (coloreado por Lift)')
+plt.xlabel('Soporte')
+plt.ylabel('Confianza')
+plt.grid(True, alpha=0.3)
+
+# 6. Top 10 reglas por lift
+plt.subplot(2, 3, 6)
+top_rules = rules.nlargest(10, 'lift')
+y_pos = range(len(top_rules))
+plt.barh(y_pos, top_rules['lift'], color='mediumpurple')
+# Crear etiquetas más cortas para las reglas
+rule_labels = []
+for idx in top_rules.index:
+    antecedents = str(list(top_rules.loc[idx, 'antecedents'])[0])[:20]
+    consequents = str(list(top_rules.loc[idx, 'consequents'])[0])[:20]
+    rule_labels.append(f"{antecedents}→{consequents}")
+plt.yticks(y_pos, rule_labels, fontsize=8)
+plt.title('Top 10 Reglas por Lift')
+plt.xlabel('Lift')
+plt.gca().invert_yaxis()
 
 plt.tight_layout()
 plt.savefig('parcial/apriori/apriori_reglas_asociacion.png', dpi=300, bbox_inches='tight')
@@ -135,6 +154,64 @@ plt.show()
 # =====================
 with open('parcial/apriori/rules_apriori.pkl', 'wb') as f:
     pickle.dump(rules, f)
+
+# =====================
+# Gráfico adicional de distribución de conviction
+# =====================
+
+plt.figure(figsize=(12, 8))
+
+# Subplot 1: Distribución de conviction (sin infinitos)
+plt.subplot(2, 2, 1)
+conviction_finite = rules['conviction'].replace([np.inf], np.nan).dropna()
+plt.hist(conviction_finite, bins=30, alpha=0.7, color='plum', edgecolor='black')
+plt.title('Distribución de Conviction (sin inf)')
+plt.xlabel('Conviction')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
+
+# Subplot 2: Scatter plot Lift vs Confidence
+plt.subplot(2, 2, 2)
+plt.scatter(rules['confidence'], rules['lift'], alpha=0.6, color='orange')
+plt.title('Lift vs Confianza')
+plt.xlabel('Confianza')
+plt.ylabel('Lift')
+plt.grid(True, alpha=0.3)
+
+# Subplot 3: Distribución del número de items en antecedentes
+plt.subplot(2, 2, 3)
+antecedent_lengths = rules['antecedents'].apply(len)
+plt.hist(antecedent_lengths, bins=range(1, max(antecedent_lengths)+2), alpha=0.7, color='cyan', edgecolor='black')
+plt.title('Distribución del Tamaño de Antecedentes')
+plt.xlabel('Número de Items en Antecedentes')
+plt.ylabel('Frecuencia')
+plt.grid(True, alpha=0.3)
+
+# Subplot 4: Estadísticas resumen
+plt.subplot(2, 2, 4)
+plt.axis('off')
+stats_text = f"""
+Resumen Estadístico Apriori:
+
+Número total de reglas: {len(rules)}
+Número de frequent itemsets: {len(frequent_itemsets)}
+
+Métricas promedio:
+• Soporte: {rules['support'].mean():.4f}
+• Confianza: {rules['confidence'].mean():.4f}
+• Lift: {rules['lift'].mean():.4f}
+• Leverage: {rules['leverage'].mean():.4f}
+
+Métricas máximas:
+• Lift máximo: {rules['lift'].max():.4f}
+• Confianza máxima: {rules['confidence'].max():.4f}
+"""
+plt.text(0.1, 0.9, stats_text, transform=plt.gca().transAxes, fontsize=10, 
+         verticalalignment='top', fontfamily='monospace')
+
+plt.tight_layout()
+plt.savefig('parcial/apriori/apriori_analisis_detallado.png', dpi=300, bbox_inches='tight')
+plt.show()
 
 # =====================
 # Visualización de las reglas
@@ -160,24 +237,15 @@ monitor.print_summary(metrics)
 # Mostrar progresión de memoria y CPU
 monitor.print_progression_sample(sample_every=10)
 
-print(f"\n=== FIN DE EJECUCIÓN APRIORI ===")
-print(f"Timestamp: {pd.Timestamp.now()}")
-print("="*50)
+print_script_footer("APRIORI")
 
 # =====================
 # Guardar salida capturada
 # =====================
 
-# Restaurar stdout original
-sys.stdout = output_capture.terminal
-
-# Obtener la salida capturada
-captured_output = output_capture.get_output()
-
-# Guardar en archivo
+# Finalizar captura y guardar
 output_filename = 'parcial/apriori/apriori_execution_log.txt'
-with open(output_filename, 'w', encoding='utf-8') as f:
-    f.write(captured_output)
+captured_output = finalize_output_capture(output_capture, output_filename)
 
 # =====================
 # Configuración de MLflow
@@ -216,9 +284,10 @@ with mlflow.start_run(run_name="Reglas_Apriori"):
     # Log del archivo con reglas
     mlflow.log_artifact('parcial/apriori/rules_apriori.pkl')
 
-    # Log del gráfico
+    # Log de los gráficos
     mlflow.log_artifact('parcial/apriori/apriori_reglas_asociacion.png')
-    
+    mlflow.log_artifact('parcial/apriori/apriori_analisis_detallado.png')
+
     # Log de la salida completa de ejecución
     mlflow.log_artifact(output_filename)
 

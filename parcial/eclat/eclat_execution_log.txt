@@ -1,0 +1,69 @@
+=== INICIO DE EJECUCIÓN ECLAT ===
+Algoritmo: Algoritmo ECLAT
+Timestamp: 2025-07-30 21:40:47.512006
+==================================================
+=== ESTADO INICIAL ===
+Memoria proceso (RSS): 1234.43 MB
+Memoria proceso (VMS): 2166.59 MB
+Memoria sistema total: 13580.68 MB (35.0%)
+CPU actual del sistema: 15.3%
+Número de núcleos CPU: 16 físicos, 16 lógicos
+Tamaño de dataset original: 126.42 MB
+Tamaño de basket_sets: 487.79 MB
+
+=== INICIANDO ALGORITMO ECLAT ===
+Calculando 1-itemsets frecuentes...
+Items frecuentes (1-itemsets): 617
+Generando itemsets de mayor tamaño...
+Itemsets frecuentes de tamaño 2: 304
+Itemsets frecuentes de tamaño 3: 60
+Itemsets frecuentes de tamaño 4: 3
+Total de itemsets frecuentes encontrados: 984
+
+Generando reglas de asociación...
+Reglas generadas: 147
+
+=== TOP 5 REGLAS DE ASOCIACIÓN ===
+                                                                   antecedents                           consequents   support  confidence       lift
+35                                                         (HERB MARKER THYME)                (HERB MARKER ROSEMARY)  0.010153    0.944134  86.829038
+34                                                      (HERB MARKER ROSEMARY)                   (HERB MARKER THYME)  0.010153    0.933702  86.829038
+33                                                       (HERB MARKER PARSLEY)                (HERB MARKER ROSEMARY)  0.009972    0.932584  85.766838
+134  (WOODEN TREE CHRISTMAS SCANDINAVIAN, WOODEN HEART CHRISTMAS SCANDINAVIAN)  (WOODEN STAR CHRISTMAS SCANDINAVIAN)  0.010213    0.928962  38.562337
+30                                                      (HERB MARKER ROSEMARY)                    (HERB MARKER MINT)  0.009972    0.917127  82.970094
+
+=== RESUMEN COMPLETO DE RECURSOS ===
+Tiempo de ejecución: 47.98 segundos
+Total de muestras capturadas: 94
+
+--- MÉTRICAS DE MEMORIA ---
+🔥 Pico de memoria del proceso: 1443.15 MB
+🔥 Pico de memoria del sistema: 13760.70 MB
+🔥 Porcentaje máximo de RAM usado: 35.5%
+📊 Memoria inicial del proceso: 1235.01 MB
+📊 Memoria final del proceso: 1323.77 MB
+📈 Memoria máxima adicional usada: 208.14 MB
+🗑️ Memoria liberada después del pico: 119.39 MB
+
+--- MÉTRICAS DE CPU ---
+🚀 Pico de CPU del proceso: 103.1%
+🚀 Pico de CPU del sistema: 22.8%
+📊 Promedio de CPU del proceso: 61.3%
+📊 Promedio de CPU del sistema: 12.4%
+⏱️ Tiempo total de CPU usado: 29.30 segundos
+⚡ Eficiencia CPU: 61.1% (CPU time / Wall time)
+
+--- PROGRESIÓN DE MEMORIA Y CPU (muestras cada 10 registros) ---
+T+0.0s: Proceso=1235.0MB, Sistema=13581MB (35.0%), CPU_proc=0.0%, CPU_sys=0.0%
+T+5.1s: Proceso=1250.7MB, Sistema=13584MB (35.0%), CPU_proc=93.9%, CPU_sys=17.6%
+T+10.2s: Proceso=1248.9MB, Sistema=13555MB (35.0%), CPU_proc=96.9%, CPU_sys=15.6%
+T+15.3s: Proceso=1251.0MB, Sistema=13564MB (35.0%), CPU_proc=96.9%, CPU_sys=13.4%
+T+20.3s: Proceso=1254.7MB, Sistema=13586MB (35.1%), CPU_proc=96.9%, CPU_sys=13.5%
+T+25.5s: Proceso=1257.6MB, Sistema=13588MB (35.1%), CPU_proc=97.1%, CPU_sys=12.5%
+T+30.5s: Proceso=1315.9MB, Sistema=13673MB (35.3%), CPU_proc=12.1%, CPU_sys=18.8%
+T+35.6s: Proceso=1323.6MB, Sistema=13690MB (35.3%), CPU_proc=78.7%, CPU_sys=13.8%
+T+40.7s: Proceso=1323.8MB, Sistema=13687MB (35.3%), CPU_proc=0.0%, CPU_sys=6.7%
+T+45.8s: Proceso=1323.8MB, Sistema=13681MB (35.3%), CPU_proc=6.2%, CPU_sys=7.0%
+
+=== FIN DE EJECUCIÓN ECLAT ===
+Timestamp: 2025-07-30 21:42:07.190055
+==================================================

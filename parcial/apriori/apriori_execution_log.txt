@@ -1,0 +1,109 @@
+=== INICIO DE EJECUCIÓN APRIORI ===
+Algoritmo: Algoritmo Apriori
+Timestamp: 2025-07-30 22:01:34.038268
+==================================================
+=== ESTADO INICIAL ===
+Memoria proceso (RSS): 1233.39 MB
+Memoria proceso (VMS): 2164.91 MB
+Memoria sistema total: 14999.55 MB (38.7%)
+CPU actual del sistema: 8.5%
+Número de núcleos CPU: 16 físicos, 16 lógicos
+Tamaño de dataset original: 126.42 MB
+Tamaño de basket_sets: 487.79 MB
+
+=== INICIANDO ALGORITMO APRIORI ===
+Calculando frequent itemsets...
+Frequent itemsets encontrados: 970
+Generando reglas de asociación...
+Reglas generadas: 138
+
+=== TOP 5 REGLAS DE ASOCIACIÓN ===
+                                                                                     antecedents                           consequents   support  confidence       lift
+30                                                                           (HERB MARKER THYME)                (HERB MARKER ROSEMARY)  0.010153    0.944134  86.829038
+31                                                                        (HERB MARKER ROSEMARY)                   (HERB MARKER THYME)  0.010153    0.933702  86.829038
+127                    (WOODEN HEART CHRISTMAS SCANDINAVIAN, WOODEN TREE CHRISTMAS SCANDINAVIAN)  (WOODEN STAR CHRISTMAS SCANDINAVIAN)  0.010213    0.928962  38.562337
+129  (ROSES REGENCY TEACUP AND SAUCER, PINK REGENCY TEACUP AND SAUCER, REGENCY CAKESTAND 3 TIER)     (GREEN REGENCY TEACUP AND SAUCER)  0.012135    0.897778  24.418969
+69                             (ROSES REGENCY TEACUP AND SAUCER, PINK REGENCY TEACUP AND SAUCER)     (GREEN REGENCY TEACUP AND SAUCER)  0.020485    0.890339  24.216650
+
+=== RESUMEN COMPLETO DE RECURSOS ===
+Tiempo de ejecución: 290.26 segundos
+Total de muestras capturadas: 559
+
+--- MÉTRICAS DE MEMORIA ---
+🔥 Pico de memoria del proceso: 31844.32 MB
+🔥 Pico de memoria del sistema: 38756.67 MB
+🔥 Porcentaje máximo de RAM usado: 100.0%
+📊 Memoria inicial del proceso: 1234.02 MB
+📊 Memoria final del proceso: 259.70 MB
+📈 Memoria máxima adicional usada: 30610.30 MB
+🗑️ Memoria liberada después del pico: 31584.62 MB
+
+--- MÉTRICAS DE CPU ---
+🚀 Pico de CPU del proceso: 103.1%
+🚀 Pico de CPU del sistema: 24.9%
+📊 Promedio de CPU del proceso: 29.7%
+📊 Promedio de CPU del sistema: 6.6%
+⏱️ Tiempo total de CPU usado: 87.86 segundos
+⚡ Eficiencia CPU: 30.3% (CPU time / Wall time)
+
+--- PROGRESIÓN DE MEMORIA Y CPU (muestras cada 10 registros) ---
+T+0.0s: Proceso=1234.0MB, Sistema=15000MB (38.7%), CPU_proc=0.0%, CPU_sys=0.0%
+T+5.6s: Proceso=15172.6MB, Sistema=28534MB (73.6%), CPU_proc=96.9%, CPU_sys=13.2%
+T+10.8s: Proceso=25294.0MB, Sistema=38179MB (98.5%), CPU_proc=87.8%, CPU_sys=12.7%
+T+15.9s: Proceso=25474.6MB, Sistema=38254MB (98.7%), CPU_proc=87.8%, CPU_sys=10.9%
+T+21.0s: Proceso=26134.7MB, Sistema=38749MB (100.0%), CPU_proc=6.2%, CPU_sys=8.0%
+T+26.1s: Proceso=22604.9MB, Sistema=38753MB (100.0%), CPU_proc=12.1%, CPU_sys=11.0%
+T+31.2s: Proceso=18714.7MB, Sistema=38753MB (100.0%), CPU_proc=6.1%, CPU_sys=8.4%
+T+36.3s: Proceso=13956.1MB, Sistema=38514MB (99.4%), CPU_proc=59.4%, CPU_sys=14.3%
+T+41.4s: Proceso=3073.2MB, Sistema=38751MB (100.0%), CPU_proc=25.0%, CPU_sys=16.9%
+T+46.6s: Proceso=64.0MB, Sistema=38750MB (100.0%), CPU_proc=7.9%, CPU_sys=7.9%
+T+52.3s: Proceso=21.8MB, Sistema=38754MB (100.0%), CPU_proc=8.8%, CPU_sys=6.1%
+T+58.0s: Proceso=5.3MB, Sistema=38753MB (100.0%), CPU_proc=2.8%, CPU_sys=10.0%
+T+63.6s: Proceso=147.5MB, Sistema=38374MB (99.0%), CPU_proc=9.4%, CPU_sys=6.8%
+T+68.7s: Proceso=577.4MB, Sistema=37977MB (98.0%), CPU_proc=25.0%, CPU_sys=3.3%
+T+73.7s: Proceso=1122.9MB, Sistema=35921MB (92.7%), CPU_proc=9.4%, CPU_sys=2.5%
+T+78.8s: Proceso=1569.2MB, Sistema=34898MB (90.0%), CPU_proc=18.8%, CPU_sys=3.1%
+T+83.9s: Proceso=1896.3MB, Sistema=33731MB (87.0%), CPU_proc=18.2%, CPU_sys=4.6%
+T+88.9s: Proceso=2185.8MB, Sistema=32488MB (83.8%), CPU_proc=0.0%, CPU_sys=3.0%
+T+94.0s: Proceso=2446.6MB, Sistema=30991MB (80.0%), CPU_proc=21.2%, CPU_sys=3.4%
+T+99.1s: Proceso=2720.2MB, Sistema=29524MB (76.2%), CPU_proc=12.5%, CPU_sys=2.7%
+T+104.2s: Proceso=3012.5MB, Sistema=28302MB (73.0%), CPU_proc=24.2%, CPU_sys=3.6%
+T+109.2s: Proceso=4576.5MB, Sistema=28841MB (74.4%), CPU_proc=31.2%, CPU_sys=3.8%
+T+114.3s: Proceso=6224.3MB, Sistema=29377MB (75.8%), CPU_proc=3.1%, CPU_sys=2.5%
+T+119.4s: Proceso=7867.9MB, Sistema=29840MB (77.0%), CPU_proc=9.4%, CPU_sys=2.9%
+T+124.4s: Proceso=10708.5MB, Sistema=31704MB (81.8%), CPU_proc=68.8%, CPU_sys=6.2%
+T+129.5s: Proceso=12421.6MB, Sistema=32279MB (83.3%), CPU_proc=45.5%, CPU_sys=7.0%
+T+134.6s: Proceso=14064.6MB, Sistema=32873MB (84.8%), CPU_proc=56.2%, CPU_sys=8.4%
+T+139.6s: Proceso=15784.4MB, Sistema=33420MB (86.2%), CPU_proc=51.5%, CPU_sys=7.9%
+T+144.7s: Proceso=17334.5MB, Sistema=33924MB (87.5%), CPU_proc=28.1%, CPU_sys=6.8%
+T+149.8s: Proceso=18398.8MB, Sistema=33820MB (87.3%), CPU_proc=57.6%, CPU_sys=5.2%
+T+154.8s: Proceso=20288.0MB, Sistema=34648MB (89.4%), CPU_proc=45.4%, CPU_sys=4.9%
+T+159.9s: Proceso=21395.5MB, Sistema=34499MB (89.0%), CPU_proc=25.0%, CPU_sys=3.3%
+T+165.0s: Proceso=23054.8MB, Sistema=35080MB (90.5%), CPU_proc=18.8%, CPU_sys=3.3%
+T+170.0s: Proceso=24790.6MB, Sistema=35735MB (92.2%), CPU_proc=15.6%, CPU_sys=4.5%
+T+175.1s: Proceso=26569.6MB, Sistema=36327MB (93.7%), CPU_proc=12.5%, CPU_sys=3.7%
+T+180.2s: Proceso=28471.7MB, Sistema=37143MB (95.8%), CPU_proc=28.1%, CPU_sys=3.9%
+T+185.2s: Proceso=29252.3MB, Sistema=37486MB (96.7%), CPU_proc=15.1%, CPU_sys=3.1%
+T+190.3s: Proceso=30895.0MB, Sistema=37719MB (97.3%), CPU_proc=9.1%, CPU_sys=4.9%
+T+195.4s: Proceso=31219.5MB, Sistema=37517MB (96.8%), CPU_proc=6.1%, CPU_sys=4.6%
+T+200.4s: Proceso=30220.8MB, Sistema=38060MB (98.2%), CPU_proc=39.4%, CPU_sys=5.1%
+T+205.5s: Proceso=29688.2MB, Sistema=37013MB (95.5%), CPU_proc=30.3%, CPU_sys=3.7%
+T+210.5s: Proceso=24081.6MB, Sistema=38081MB (98.3%), CPU_proc=36.3%, CPU_sys=5.9%
+T+215.6s: Proceso=24392.5MB, Sistema=36897MB (95.2%), CPU_proc=36.3%, CPU_sys=4.7%
+T+220.7s: Proceso=24694.9MB, Sistema=35700MB (92.1%), CPU_proc=12.1%, CPU_sys=3.1%
+T+225.7s: Proceso=26037.4MB, Sistema=36062MB (93.0%), CPU_proc=25.0%, CPU_sys=8.1%
+T+230.8s: Proceso=27655.4MB, Sistema=36878MB (95.2%), CPU_proc=21.9%, CPU_sys=5.7%
+T+235.9s: Proceso=28525.9MB, Sistema=37108MB (95.7%), CPU_proc=12.5%, CPU_sys=3.5%
+T+240.9s: Proceso=29410.6MB, Sistema=37483MB (96.7%), CPU_proc=25.0%, CPU_sys=5.4%
+T+246.0s: Proceso=30223.2MB, Sistema=37630MB (97.1%), CPU_proc=46.9%, CPU_sys=5.0%
+T+251.1s: Proceso=26365.0MB, Sistema=38332MB (98.9%), CPU_proc=12.5%, CPU_sys=11.1%
+T+256.1s: Proceso=26517.7MB, Sistema=37113MB (95.8%), CPU_proc=25.0%, CPU_sys=4.2%
+T+261.2s: Proceso=27548.0MB, Sistema=36917MB (95.3%), CPU_proc=59.4%, CPU_sys=11.5%
+T+266.2s: Proceso=28787.9MB, Sistema=37435MB (96.6%), CPU_proc=78.1%, CPU_sys=7.2%
+T+274.1s: Proceso=4965.9MB, Sistema=9661MB (24.9%), CPU_proc=103.0%, CPU_sys=19.2%
+T+280.2s: Proceso=72.8MB, Sistema=4848MB (12.5%), CPU_proc=12.3%, CPU_sys=3.1%
+T+285.5s: Proceso=251.9MB, Sistema=5208MB (13.4%), CPU_proc=0.0%, CPU_sys=5.0%
+
+=== FIN DE EJECUCIÓN APRIORI ===
+Timestamp: 2025-07-30 22:06:53.738979
+==================================================

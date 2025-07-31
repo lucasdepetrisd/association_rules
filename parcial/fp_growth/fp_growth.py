@@ -4,19 +4,8 @@ import numpy as np
 import pickle
 from mlxtend.frequent_patterns import fpgrowth, association_rules
 import mlflow
-import sys
-import io
-import os
-
-# Agregar el directorio padre al path para importar el monitor
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from resource_monitor import ResourceMonitor, get_dataset_memory_usage, print_initial_system_info
-
-# Configurar pandas para mostrar mejor los datos
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_rows', None)
+from output_capture import setup_output_capture, finalize_output_capture, print_script_header, print_script_footer
 
 mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_experiment("Reglas_FP_Growth")
@@ -25,30 +14,10 @@ mlflow.set_experiment("Reglas_FP_Growth")
 # Capturar salida de print
 # =====================
 
-class TeeOutput:
-    """Clase para capturar print y mantener salida en consola"""
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = io.StringIO()
-    
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-    
-    def flush(self):
-        self.terminal.flush()
-        self.log.flush()
-    
-    def get_output(self):
-        return self.log.getvalue()
-
 # Iniciar captura de salida
-output_capture = TeeOutput()
-sys.stdout = output_capture
+output_capture = setup_output_capture()
 
-print("=== INICIO DE EJECUCIÓN FP-GROWTH ===")
-print(f"Timestamp: {pd.Timestamp.now()}")
-print("="*50)
+print_script_header("FP-GROWTH", "Algoritmo FP-Growth")
 
 # =====================
 # Cargar el dataset
@@ -268,26 +237,15 @@ monitor.print_summary(metrics)
 # Mostrar progresión de memoria y CPU
 monitor.print_progression_sample(sample_every=10)
 
-print(f"\n=== FIN DE EJECUCIÓN FP-GROWTH ===")
-print(f"Timestamp: {pd.Timestamp.now()}")
-print("="*50)
+print_script_footer("FP-GROWTH")
 
 # =====================
 # Guardar salida capturada
 # =====================
 
-# Restaurar stdout original
-sys.stdout = output_capture.terminal
-
-# Obtener la salida capturada
-captured_output = output_capture.get_output()
-
-# Guardar en archivo
+# Finalizar captura y guardar
 output_filename = 'parcial/fp_growth/fp_growth_execution_log.txt'
-with open(output_filename, 'w', encoding='utf-8') as f:
-    f.write(captured_output)
-
-print(f"Salida de ejecución guardada en: {output_filename}")
+captured_output = finalize_output_capture(output_capture, output_filename)
 
 # =====================
 # Configuración de MLflow
