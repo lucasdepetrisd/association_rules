@@ -115,8 +115,9 @@ output_capture = setup_output_capture()
 monitor = ResourceMonitor(monitoring_interval=0.5)
 
 # 4. Preprocesamiento del dataset
-# - Limpieza de datos
-# - Creación de matriz de transacciones
+# - Carga de cleaned_online_retail.csv
+# - Limpieza adicional (strip, filtros)
+# - Creación de matriz de transacciones (basket)
 
 # 5. Ejecución del algoritmo
 # - Generación de frequent itemsets
